@@ -1,0 +1,22 @@
+{
+    "name": "codewiser/laravel-enum-casting",
+    "description": "Laravel set or enum casting",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Codewiser\\LaravelEnumCasting\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Abduraimov Timur",
+            "email": "at@101media.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {}
+}
