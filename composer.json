@@ -1,10 +1,17 @@
 {
     "name": "codewiser/laravel-enum-casting",
-    "description": "Laravel set or enum casting",
+    "description": "Casts set or array of enums",
+    "keywords": ["larvel", "enum", "array"],
     "license": "MIT",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
-            "Codewiser\\LaravelEnumCasting\\": "src/"
+            "Codewiser\\Enum\\Castable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "authors": [
@@ -14,9 +21,12 @@
         }
     ],
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "laravel/framework": "^9.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "require": {}
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
 }
