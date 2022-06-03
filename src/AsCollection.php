@@ -28,7 +28,6 @@ class AsCollection implements Castable
             public function set($model, $key, $value, $attributes)
             {
                 return parent::set($model, $key, $value, $attributes);
-                // return [$key => json_encode($value)];
             }
         };
     }

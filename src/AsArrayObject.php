@@ -10,7 +10,7 @@ class AsArrayObject implements Castable
     /**
      * @inheritDoc
      */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): BaseEnumerable
     {
         return new class($arguments) extends BaseEnumerable {
 
@@ -18,18 +18,6 @@ class AsArrayObject implements Castable
             {
                 $resultArray = parent::get($model, $key, $value, $attributes);
                 return new ArrayObject($resultArray);
-            }
-
-            /**
-             * @param $model
-             * @param string $key
-             * @param ArrayObject $value
-             * @param array $attributes
-             * @return mixed
-             */
-            public function serialize($model, string $key, $value, array $attributes)
-            {
-                return $value->getArrayCopy();
             }
         };
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests;
+namespace Tests\Enums;
 
-enum Enumer: int
+enum EnumerInt: int
 {
     case one = 1;
     case two = 2;

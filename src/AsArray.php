@@ -3,8 +3,6 @@
 namespace Codewiser\Enum\Castable;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Casts\ArrayObject;
 
 class AsArray implements Castable
 {
