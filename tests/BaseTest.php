@@ -19,19 +19,23 @@ abstract class BaseTest extends TestCase
 {
     public function testSetFieldType()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $object = $class::castUsing(['set', EnumerInt::class]);
+
         $this->assertObjectHasAttribute('fieldType', $object);
+
         $this->assertTrue($object->fieldType === 'set');
     }
 
     public function testJsonFieldType()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $object = $class::castUsing(['json', EnumerInt::class]);
+
         $this->assertObjectHasAttribute('fieldType', $object);
+
         $this->assertTrue($object->fieldType === 'json');
     }
 
@@ -39,8 +43,8 @@ abstract class BaseTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $class::castUsing(['invalidSet', EnumerInt::class]);
     }
 
@@ -48,8 +52,8 @@ abstract class BaseTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $class::castUsing(['set', 'InvalidEnum']);
     }
 
@@ -57,8 +61,8 @@ abstract class BaseTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $class::castUsing(['set', EnumerString::class, 'InvalidCollection']);
     }
 
@@ -83,14 +87,13 @@ abstract class BaseTest extends TestCase
     {
         $this->expectException(NotEnoughArgumentsException::class);
 
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $class::castUsing([EnumerString::class]);
     }
 
     public function testArgumentsOrder()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
         $orders = [
@@ -115,12 +118,12 @@ abstract class BaseTest extends TestCase
 
     public function testReturnValues()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
+
         $dbValue = '1,2,3';
 
         $values = $class::castUsing(['set', EnumerInt::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
 
         switch (true) {
             case ($this instanceof AsArrayTest):
@@ -149,15 +152,15 @@ abstract class BaseTest extends TestCase
 
     public function testWithNotExistsValues()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
-
         $dbValue = '1,2,4';
+
         $values = $class::castUsing(['set', EnumerInt::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
 
         $this->assertCount(2, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerInt::one, $values));
@@ -175,10 +178,12 @@ abstract class BaseTest extends TestCase
 
 
         $dbValue = 'one,two,four';
+
         $values = $class::castUsing(['set', EnumerString::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
 
         $this->assertCount(2, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerString::one, $values));
@@ -197,32 +202,46 @@ abstract class BaseTest extends TestCase
 
     public function testNull()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
+        $dbValue = null;
 
-        $dbValue = '4,5,6';
         $values = $class::castUsing(['set', EnumerInt::class])
-            ->get(null, 'attribute', $dbValue, []);
-
-        $this->assertNull($values);
-
-        $dbValue = 'four,five,six';
-        $values = $class::castUsing(['set', EnumerString::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
 
         $this->assertNull($values);
     }
 
+    public function testNotInList()
+    {
+        $class = $this->getCastClass();
+
+        $dbValue = '4,5,6';
+
+        $values = $class::castUsing(['set', EnumerInt::class])
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
+        $this->assertCount(0, $values);
+
+        $dbValue = 'four,five,six';
+
+        $values = $class::castUsing(['set', EnumerString::class])
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
+        $this->assertCount(0, $values);
+    }
+
     public function testWithSpaces()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
         $dbValue = ' 1, 2,  3';
+
         $values = $class::castUsing(['set', EnumerInt::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
         $this->assertCount(3, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerInt::one, $values));
@@ -241,11 +260,13 @@ abstract class BaseTest extends TestCase
                 break;
         }
 
-
         $dbValue = ' one,  two, three  ';
+
         $values = $class::castUsing(['set', EnumerString::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
         $this->assertCount(3, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerString::one, $values));
@@ -267,13 +288,15 @@ abstract class BaseTest extends TestCase
 
     public function testWithEmptyValue()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
         $dbValue = '1,,3';
+
         $values = $class::castUsing(['set', EnumerInt::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
         $this->assertCount(2, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerInt::one, $values));
@@ -289,11 +312,13 @@ abstract class BaseTest extends TestCase
                 break;
         }
 
-
         $dbValue = 'one,,three';
+
         $values = $class::castUsing(['set', EnumerString::class])
-            ->get(null, 'attribute', $dbValue, []);
+            ->get(null, 'name', $dbValue, ['name' => $dbValue]);
+
         $this->assertCount(2, $values);
+
         switch (true) {
             case ($this instanceof AsArrayTest):
                 $this->assertTrue(in_array(EnumerString::one, $values));
@@ -312,11 +337,11 @@ abstract class BaseTest extends TestCase
 
     public function testSet()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
         // test set with int enum
         $value = [1, 2, 3];
+
         $result = $class::castUsing(['set', EnumerInt::class])
             ->set(null, 'key', $value, []);
 
@@ -330,7 +355,6 @@ abstract class BaseTest extends TestCase
         $this->assertIsArray($result);
         $this->assertJson($result['key']);
         $this->assertTrue($result === ["key" => "[1,2,3]"]);
-
 
         // test set with int enum
         $value = ['one', 'two', 'three'];
@@ -351,7 +375,6 @@ abstract class BaseTest extends TestCase
 
     public function testSetWithNotExistsValues()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
         $class = $this->getCastClass();
 
         // test int enum with set
@@ -386,7 +409,7 @@ abstract class BaseTest extends TestCase
 
     public function testSetEmpty()
     {
-        /** @var AsArray|AsCollection|AsArrayObject $class */
+
         $class = $this->getCastClass();
         $value = [];
 
@@ -417,21 +440,5 @@ abstract class BaseTest extends TestCase
         $this->assertNull($result);
     }
 
-
-
-    private function getCastClass(): AsArray|AsCollection|AsArrayObject|string
-    {
-        switch (true) {
-            case ($this instanceof AsCollectionTest):
-                $class = AsCollection::class;
-                break;
-            case ($this instanceof AsArrayObjectTest):
-                $class = AsArrayObject::class;
-                break;
-            default:
-                $class = AsArray::class;
-                break;
-        }
-        return $class;
-    }
+    abstract protected function getCastClass(): string|AsArray|AsArrayObject|AsCollection;
 }

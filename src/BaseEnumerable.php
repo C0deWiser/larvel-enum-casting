@@ -2,6 +2,7 @@
 
 namespace Codewiser\Enum\Castable;
 
+use BackedEnum;
 use Codewiser\Enum\Castable\Exceptions\InvalidArgumentException;
 use Codewiser\Enum\Castable\Exceptions\NotEnoughArgumentsException;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
@@ -9,13 +10,19 @@ use Illuminate\Support\Collection;
 
 abstract class BaseEnumerable implements CastsAttributes
 {
-    /** @var string $fieldType DB field type */
+    /**
+     * @var string $fieldType DB field type
+     */
     public string $fieldType;
 
-    /** @var string $enumClass Enum */
-    public string $enumClass;
+    /**
+     * @var string|BackedEnum $enumClass Enum
+     */
+    public string|BackedEnum $enumClass;
 
-    /** @var string|null $customCollection Defined result collection */
+    /**
+     * @var string|null $customCollection Defined result collection
+     */
     public string|null $customCollection = null;
 
     public function __construct(array $arguments)
@@ -42,7 +49,7 @@ abstract class BaseEnumerable implements CastsAttributes
                 $this->enumClass = $argument;
                 continue;
             }
-            if ($argument === 'set' || $argument === 'json') {
+            if ($argument === 'set' || $argument === 'json' || $argument === 'array') {
                 $this->fieldType = $argument;
                 continue;
             }
@@ -69,9 +76,13 @@ abstract class BaseEnumerable implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
+        if (!isset($attributes[$key])) {
+            return;
+        }
+
         $items = match ($this->fieldType) {
             'set' => array_filter(array_map('trim', explode(',', $value))),
-            'json' => json_decode($value),
+            'json', 'array' => json_decode($value, true),
             default => [],
         };
 
@@ -81,13 +92,9 @@ abstract class BaseEnumerable implements CastsAttributes
         }, $items);
 
         // Filter null values and return result
-        $filtered = array_filter($arrayOfFoundEnumValues, function ($item) {
+        return array_filter($arrayOfFoundEnumValues, function ($item) {
             return $item;
         });
-
-        return count($filtered)
-            ? $filtered
-            : null;
     }
 
     /**
@@ -101,19 +108,19 @@ abstract class BaseEnumerable implements CastsAttributes
         }
 
         // Filter values by Enum cases
-        $filtredByEnumCasesArray = array_filter($value, function ($item) {
+        $filteredByEnumCasesArray = array_filter($value, function ($item) {
             return $this->enumClass::tryFrom($item);
         });
 
         // If filtered array is empty set null
-        if (!count($filtredByEnumCasesArray)) {
+        if (!count($filteredByEnumCasesArray)) {
             return null;
         }
 
         // Convert array to defined field type
         $convertedToFieldTypeValue = match ($this->fieldType) {
-            'set' => implode(',', $filtredByEnumCasesArray),
-            'json' => json_encode($filtredByEnumCasesArray),
+            'set' => implode(',', $filteredByEnumCasesArray),
+            'json', 'array' => json_encode($filteredByEnumCasesArray),
             default => null,
         };
 
