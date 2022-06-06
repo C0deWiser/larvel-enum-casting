@@ -17,12 +17,14 @@ class AsCollection implements Castable
 
             public function get($model, $key, $value, $attributes)
             {
-                $resultArray = parent::get($model, $key, $value, $attributes);
+                $result = parent::get($model, $key, $value, $attributes);
 
-                return $this->customCollection
-                    ? new $this->customCollection($resultArray)
-                    : new Collection($resultArray);
 
+                return is_array($result)
+                    ? ($this->customCollection
+                        ? new $this->customCollection($result)
+                        : new Collection($result))
+                    : $result;
             }
 
             public function set($model, $key, $value, $attributes)

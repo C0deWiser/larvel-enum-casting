@@ -6,6 +6,10 @@
 composer require codewiser/laravel-enum-casting
 ```
 
+## Возвращающиеся значения
+
+null если значений нет или значения не представлены в Enum'е
+
 ## Usage
 
 ```injectablephp

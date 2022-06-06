@@ -2,7 +2,9 @@
 
 namespace Codewiser\Enum\Castable\Exceptions;
 
-class InvalidArgumentException extends \Exception
+use Exception;
+
+class InvalidArgumentException extends Exception
 {
     protected $message = 'Invalid argument';
 }

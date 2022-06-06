@@ -14,10 +14,12 @@ class AsArrayObject implements Castable
     {
         return new class($arguments) extends BaseEnumerable {
 
-            public function get($model, $key, $value, $attributes): ArrayObject
+            public function get($model, $key, $value, $attributes)
             {
-                $resultArray = parent::get($model, $key, $value, $attributes);
-                return new ArrayObject($resultArray);
+                $result = parent::get($model, $key, $value, $attributes);
+                return is_array($result)
+                    ? new ArrayObject($result)
+                    : $result;
             }
         };
     }

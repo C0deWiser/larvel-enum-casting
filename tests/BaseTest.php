@@ -195,6 +195,25 @@ abstract class BaseTest extends TestCase
         }
     }
 
+    public function testNull()
+    {
+        /** @var AsArray|AsCollection|AsArrayObject $class */
+        $class = $this->getCastClass();
+
+
+        $dbValue = '4,5,6';
+        $values = $class::castUsing(['set', EnumerInt::class])
+            ->get(null, 'attribute', $dbValue, []);
+
+        $this->assertNull($values);
+
+        $dbValue = 'four,five,six';
+        $values = $class::castUsing(['set', EnumerString::class])
+            ->get(null, 'attribute', $dbValue, []);
+
+        $this->assertNull($values);
+    }
+
     public function testWithSpaces()
     {
         /** @var AsArray|AsCollection|AsArrayObject $class */

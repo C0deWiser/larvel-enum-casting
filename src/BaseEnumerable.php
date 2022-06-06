@@ -81,9 +81,13 @@ abstract class BaseEnumerable implements CastsAttributes
         }, $items);
 
         // Filter null values and return result
-        return array_filter($arrayOfFoundEnumValues, function ($item) {
+        $filtered = array_filter($arrayOfFoundEnumValues, function ($item) {
             return $item;
         });
+
+        return count($filtered)
+            ? $filtered
+            : null;
     }
 
     /**
