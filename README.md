@@ -1,5 +1,7 @@
 # Laravel Enum Casting
 
+[![PHP Composer](https://github.com/C0deWiser/larvel-enum-casting/actions/workflows/php.yml/badge.svg)](https://github.com/C0deWiser/larvel-enum-casting/actions/workflows/php.yml)
+
 This package brings enums casting into Laravel projects.
 
 ## Install
